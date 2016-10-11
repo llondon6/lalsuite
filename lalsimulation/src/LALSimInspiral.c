@@ -862,7 +862,7 @@ int XLALSimInspiralChooseTDWaveform(
 					 /* Waveform-specific sanity checks */
 
 					 /* Call the waveform driver routine */
-					 ret = XLALSimRingdownMMRDNSTD(hplus, hcross, phiRef, i, deltaT, m1, m2, r );
+					 ret = XLALSimRingdownMMRDNSTD(hplus, hcross, phiRef, i, deltaT, m1, m2, r, nonGRparams );
 					 break;
 
 

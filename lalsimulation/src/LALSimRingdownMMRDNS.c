@@ -21,7 +21,18 @@
 //  //
 // HEADER SECTION
 //  //
-#include LALSimRingdownMMRDNS.h
+#ifdef __GNUC__
+#define UNUSED __attribute__ ((unused))
+#else
+#define UNUSED
+#endif
+
+// #include "LALSimRingdownMMRDNS.h"
+#include <stdbool.h>
+#include <math.h>
+#include <complex.h>
+
+#include <lal/LALSimRingdownMMRDNS.h>
 #include <lal/SphericalHarmonics.h>
 #include <lal/LALConstants.h>
 #include <lal/XLALError.h>
@@ -31,6 +42,8 @@
 #include <lal/Sequence.h>
 #include <lal/LALStdio.h>
 #include <lal/FileIO.h>
+#include <lal/StringInput.h>
+#include <lal/TimeSeries.h>
 
 /*
 * -------------------------------------------------------------------------------- *
@@ -64,13 +77,13 @@ static double CW07102016( double kappa  // Domain mapping for remnant BH's spin 
   double kappa4 = kappa3 * kappa;
 
   // NOTE that |m| will be used to determine the fit to use, and if input_m < 0, then a conjugate will be taken
-  int m = abs(input_m)
+  int m = abs(input_m);
 
   //
-  complex double j = _Complex_I
+  complex double j = _Complex_I;
 
   // Initialize the answer
-  double complex ans
+  double complex ans;
 
   // Use If-Else ladder to determine which mode function to evaluate
   if ( 2==l && 2==m && 0==n  ){
@@ -413,7 +426,6 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin o
 
   complex double cw = CW07102016( kappa, l, m, n );
   complex double sc = SC07102016( kappa, l, m, n );
-  cw,sc = lvr( jf, l, m, n );
 
   // Define dimensionless deformation parameter
   const complex double aw = jf*cw;
@@ -482,6 +494,7 @@ int XLALSimRingdownMMRDNSTD(
         REAL8 m1,                       /**< mass of companion 1 (kg) */
         REAL8 m2,                       /**< mass of companion 2 (kg) */
         REAL8 r,                        /**< distance of source (m) */
+        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
         ){
 
   print("\n\n\n\n\n\nI AM HERE. AND YOU ARE THERE.\n\n\n\n")

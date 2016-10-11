@@ -250,7 +250,8 @@ int XLALSimRingdownMMRDNSTD(
         REAL8 deltaT,                   /**< sampling interval (s) */
         REAL8 m1,                       /**< mass of companion 1 (kg) */
         REAL8 m2,                       /**< mass of companion 2 (kg) */
-        REAL8 r                        /**< distance of source (m) */
+        REAL8 r,                        /**< distance of source (m) */
+        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
         );
 
 #if 0
