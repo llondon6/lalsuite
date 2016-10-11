@@ -313,7 +313,7 @@ typedef enum tagApproximant {
                          * @remarks Implemented in lalsimulation (time domain). */
    SEOBNRv3,		/**< Spin precessing EOBNR model v3
                          * @remarks Implemented in lalsimulation (time domain). */
-   SEOBNRv4,		/**< Spin nonprecessing EOBNR model v4 
+   SEOBNRv4,		/**< Spin nonprecessing EOBNR model v4
                          * @remarks Implemented in lalsimulation (time domain). */
    SEOBNRv4_opt,	/**< Optimized Spin-aligned EOBNR model v4
                          * @remarks Implemented in lalsimulation (time domain). */
@@ -366,6 +366,7 @@ typedef enum tagApproximant {
    SpinDominatedWf,     /**< Time domain, inspiral only, 1 spin, precessing waveform, Tapai et al, arXiv: 1209.1722
                          * @remarks Implemented in lalsimulation (time domain). */
    NR_hdf5,              /**< Time domain, NR waveform from HDF file. From INSERT LINKS HERE */
+   MMRDNS,              /**< Time domain, Multi-Spheroidal-Mode Ringdown model. From arXiv:1404.3197 */
    NumApproximants	/**< Number of elements in enum, useful for checking bounds */
  } Approximant;
 

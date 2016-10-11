@@ -149,6 +149,7 @@ static const char *lalSimulationApproximantNames[] = {
     INITIALIZE_NAME(SpinTaylorT2Fourier),
     INITIALIZE_NAME(SpinDominatedWf),
     INITIALIZE_NAME(NR_hdf5),
+    INITIALIZE_NAME(MMRDNS),
 };
 #undef INITIALIZE_NAME
 
@@ -836,15 +837,15 @@ int XLALSimInspiralChooseTDWaveform(
                                                    deltaT, m1, m2, f_min, r, i, S1z, S2z, SpinAlignedEOBversion);
             break;
 
-	case HGimri:
-	     /* Waveform-specific sanity checks */
-	     if( !checkTidesZero(lambda1, lambda2) )
-		 ABORT_NONZERO_TIDES(waveFlags);
-	     if( !checkCOSpinZero(S2x, S2y, S2z) )
-		 ABORT_NONZERO_SPIN2(waveFlags);
-	     /* Call the waveform driver */
-	     ret = XLALHGimriGenerator(hplus, hcross, phiRef, deltaT, m1, m2, f_min, r, i, S1z);
-	     break;
+				case HGimri:
+				     /* Waveform-specific sanity checks */
+				     if( !checkTidesZero(lambda1, lambda2) )
+					 ABORT_NONZERO_TIDES(waveFlags);
+				     if( !checkCOSpinZero(S2x, S2y, S2z) )
+					 ABORT_NONZERO_SPIN2(waveFlags);
+				     /* Call the waveform driver */
+				     ret = XLALHGimriGenerator(hplus, hcross, phiRef, deltaT, m1, m2, f_min, r, i, S1z);
+				     break;
 
         case NR_hdf5:
             /* Waveform-specific sanity checks */
@@ -856,6 +857,13 @@ int XLALSimInspiralChooseTDWaveform(
                     S2x, S2y, S2z, numrel_data_path);
             XLALFree(numrel_data_path);
             break;
+
+			 case MMRDNS:
+					 /* Waveform-specific sanity checks */
+
+					 /* Call the waveform driver routine */
+					 ret = XLALSimRingdownMMRDNSTD(hplus, hcross, phiRef, i, deltaT, m1, m2, r );
+					 break;
 
 
         default:
@@ -3975,6 +3983,7 @@ int XLALSimInspiralImplementedTDApproximants(
         case SEOBNRv4:
         case SEOBNRv4_opt:
         case NR_hdf5:
+				case MMRDNS:
             return 1;
 
         default:
@@ -4402,6 +4411,9 @@ int XLALSimInspiralGetSpinSupportFromApproximant(Approximant approx){
     case SpinTaylorT4Fourier:
     case SpinDominatedWf:
     case SEOBNRv3:
+		case MMRDNS:
+      spin_support=LAL_SIM_INSPIRAL_SPINLESS;
+      break;
     case NR_hdf5:
       spin_support=LAL_SIM_INSPIRAL_PRECESSINGSPIN;
       break;
@@ -4533,6 +4545,9 @@ int XLALSimInspiralApproximantAcceptTestGRParams(Approximant approx){
     case EccentricTD:
     case IMRPhenomC:
     case IMRPhenomD:
+		case MMRDNS:
+      testGR_accept=LAL_SIM_INSPIRAL_TESTGR_PARAMS;
+      break;
     case IMRPhenomP:
     case IMRPhenomPv2:
       testGR_accept=LAL_SIM_INSPIRAL_TESTGR_PARAMS;
@@ -4939,7 +4954,7 @@ double XLALSimInspiralGetFinalFreq(
             }
             freqFunc = fSEOBNRv4RD;
             break;
-            
+
         case IMRPhenomA:
             /* Check that spins are zero */
             if( !checkSpinsZero(S1x, S1y, S1z, S2x, S2y, S2z) )
@@ -4980,6 +4995,11 @@ double XLALSimInspiralGetFinalFreq(
         case SpinTaylorF2:
         /* NR waveforms */
         case NR_hdf5:
+            XLALPrintError("I don't know how to calculate final freq. for this approximant, sorry!\n");
+            XLAL_ERROR(XLAL_EINVAL);
+            break;
+        /* Multi-Mode ringdown (spheroidal) */
+        case MMRDNS:
             XLALPrintError("I don't know how to calculate final freq. for this approximant, sorry!\n");
             XLAL_ERROR(XLAL_EINVAL);
             break;
@@ -5136,19 +5156,19 @@ int XLALSimInspiralTDConditionStage2(REAL8TimeSeries *hplus, REAL8TimeSeries *hc
 
 
 /**
- * @brief Function for determining the starting frequency 
+ * @brief Function for determining the starting frequency
  * of the (2,2) mode when the highest order contribution starts at fLow.
  * @details
- * Compute the minimum frequency for waveform generation 
- *  using amplitude orders above Newtonian.  The waveform 
- *  generator turns on all orders at the orbital          
- *  associated with fMin, so information from higher      
- *  orders is not included at fLow unless fMin is         
+ * Compute the minimum frequency for waveform generation
+ *  using amplitude orders above Newtonian.  The waveform
+ *  generator turns on all orders at the orbital
+ *  associated with fMin, so information from higher
+ *  orders is not included at fLow unless fMin is
  *  sufficiently low.
  *
  * @param fLow  Requested lower frequency.
  * @param ampOrder Requested amplitude order.
- * @param approximant LALApproximant 
+ * @param approximant LALApproximant
  * @retval fStart The lower frequency to use to include corrections.
  */
 REAL8 XLALSimInspiralfLow2fStart(REAL8 fLow, INT4 ampOrder, INT4 approximant)
