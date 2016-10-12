@@ -2,7 +2,7 @@
 #define _LALSIM_RINGDOWN_MMRDNS_H
 
 
-// ************************************************************ //
+/* ************************************************************  */
 /*
  * Copyright (C) 2016 Lionel London
  *
@@ -28,11 +28,11 @@
  } /* so that editors will match preceding brace */
  #endif
 
-// Include the desired Libs
+/* Include the desired Libs */
 #include <stdbool.h>
 #include <math.h>
 #include <complex.h>
-// LAL specific libs
+/* LAL specific libs  */
 
 #include <lal/LALDatatypes.h>
 #include <lal/LALStdlib.h>
@@ -45,11 +45,11 @@
 #include <lal/Units.h>
 #include <lal/LALSimInspiral.h>
 
-// ---------------------------------------- //
-// General model methods and parameters     //
-// ---------------------------------------- //
+/* ---------------------------------------- */
+/* General model methods and parameters     */
+/* ---------------------------------------- */
 
-// Mode included within the model
+/* Mode included within the model */
 static const int MMRDNS_MODES[9][3] =  { {2,2,0},
                                          {2,2,1},
                                          {3,3,0},
@@ -61,31 +61,31 @@ static const int MMRDNS_MODES[9][3] =  { {2,2,0},
                                          {4,3,0}
                                        };
 
-// --> Domain mapping for final spin, Kappa
+/* --> Domain mapping for final spin, Kappa */
 static double KAPPA( double jf, int l, int m );
-// --> Fits for complex QNM frequencies
-static double CW07102016( double kappa,  // Domain mapping for remnant BH's spin (Dimensionless)
-                          int l,        // Polar eigenvalue
-                          int input_m,  // Azimuthal eigenvalue
-                          int n );      // Overtone Number
-// --> Fits for complex QNM separation constants; needed to calculate spheroidal harmonics
-static double SC07102016( double kappa,  // Domain mapping for remnant BH's spin (Dimensionless)
-                          int l,        // Polar eigenvalue
-                          int input_m,  // Azimuthal eigenvalue
-                          int n );      // Overtone Number
-// --> Fits for spheroidal harmonic normalization constants; needed to calculate spheroidal harmonics
-static double CC09102016( double kappa,  // Domain mapping for remnant BH's spin (Dimensionless)
-                          int l,        // Polar eigenvalue
-                          int input_m,  // Azimuthal eigenvalue
-                          int n );      // Overtone Number
-// --> Final Mass fit arXiv:1404.3197
+/* --> Fits for complex QNM frequencies */
+static double CW07102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
+                          int l,        /* Polar eigenvalue */
+                          int input_m,  /* Azimuthal eigenvalue */
+                          int n );      /* Overtone Number */
+/* --> Fits for complex QNM separation constants; needed to calculate spheroidal harmonics */
+static double SC07102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
+                          int l,        /* Polar eigenvalue */
+                          int input_m,  /* Azimuthal eigenvalue */
+                          int n );      /* Overtone Number */
+/* --> Fits for spheroidal harmonic normalization constants; needed to calculate spheroidal harmonics */
+static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin */ (Dimensionless)
+                          int l,        /* Polar eigenvalue */
+                          int input_m,  /* Azimuthal eigenvalue */
+                          int n );      /* Overtone Number */
+/* --> Final Mass fit arXiv:1404.3197 */
 static double MF07102016( double eta );
-// --> Final Spin fit arXiv:1404.3197
+/* --> Final Spin fit arXiv:1404.3197 */
 static double JF07102016( double eta );
 
-// ------------------------------------------------ #
-// Angular parameter functions
-// ------------------------------------------------ #
+/* ------------------------------------------------ # */
+/* Angular parameter functions
+/* ------------------------------------------------ # */
 static double K1( int m, int s );
 static double K2( int m, int s );
 static complex double ALPHA( int m, int s, int p );
@@ -95,14 +95,14 @@ static complex double GAMMA( int m, int s, int p, complex double aw );
 /*
 * Spheroical Harmonic Functions (Leaver's Formulation circa 1986/85)
 */
-static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin of remnant
-                   int l, int m, int n, // QNM indeces
-                   double theta,        // polar angle
-                   double phi,          // azimuthal angle
-                   bool norm           // boolean toggle for normalization
+static double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
+                   int l, int m, int n, /* QNM indeces */
+                   double theta,        /* polar angle */
+                   double phi,          /* azimuthal angle */
+                   bool norm           /* boolean toggle for normalization  */
                  );
 
-// Gnerate Time domain ringdown waveform
+/* Gnerate Time domain ringdown waveform  */
 int XLALSimRingdownMMRDNSTD(
         REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
         REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
@@ -116,5 +116,5 @@ int XLALSimRingdownMMRDNSTD(
         );
 
 
-// ************************************************************ //
-#endif	// of #ifndef _LALSIM_RINGDOWN_MMRDNS_H
+/* ************************************************************  */
+#endif	/* of #ifndef _LALSIM_RINGDOWN_MMRDNS_H */
