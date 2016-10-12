@@ -86,6 +86,8 @@ static double JF07102016( double eta );
 // ------------------------------------------------ #
 // Angular parameter functions
 // ------------------------------------------------ #
+static double K1( int m, int s );
+static double K2( int m, int s );
 static complex double ALPHA( int m, int s, int p );
 static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm, complex double w_lm );
 static complex double GAMMA( int m, int s, int p, complex double aw );

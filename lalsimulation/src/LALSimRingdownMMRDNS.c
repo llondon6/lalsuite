@@ -28,9 +28,11 @@
 #endif
 
 // #include "LALSimRingdownMMRDNS.h"
+#include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
 #include <complex.h>
+#include <stdlib.h>
 
 #include <lal/LALSimRingdownMMRDNS.h>
 #include <lal/SphericalHarmonics.h>
@@ -56,17 +58,17 @@
 */
 static double KAPPA( double jf, int l, int m ){
   //
-  if ( jf > 1.0 ) XLAL_ERROR(XLAL_EDOM, "Spin (dimensionless Kerr parameter) must not be greater than 1.0\n");
+  // if ( jf > 1.0 ) XLAL_ERROR(XLAL_EDOM, "Spin (dimensionless Kerr parameter) must not be greater than 1.0\n");
   //
   double alpha = log( 2.0 - jf ) / log(3);
   double beta  = 1.0 / ( 2.0 + l-abs(m) );
-  return pow( alpha , beta )
+  return pow( alpha , beta );
 }
 
 /*
 * Dimensionless QNM Frequencies: Note that name encodes date of writing
 */
-static double CW07102016( double kappa  // Domain mapping for remnant BH's spin (Dimensionless)
+static double CW07102016( double kappa,  // Domain mapping for remnant BH's spin (Dimensionless)
                           int l,        // Polar eigenvalue
                           int input_m,  // Azimuthal eigenvalue
                           int n ) {     // Overtone Number
@@ -182,15 +184,17 @@ static double CW07102016( double kappa  // Domain mapping for remnant BH's spin 
     } else {
 
       //
-      ans  = 0.0
+      ans  = 0.0;
 
   } // END of IF-ELSE Train for QNM cases
 
   // If m<0, then take the *Negative* conjugate
   if ( input_m < 0 ) {
     //
-    ans = -conj( ans )
+    ans = -conj( ans );
   }
+
+  return ans;
 
 } // END of CW07102016
 
@@ -198,7 +202,7 @@ static double CW07102016( double kappa  // Domain mapping for remnant BH's spin 
 /*
 * QNM Separation Constants: Note that name encodes date of writing
 */
-static double SC07102016( double kappa  // Domain mapping for remnant BH's spin (Dimensionless)
+static double SC07102016( double kappa,  // Domain mapping for remnant BH's spin (Dimensionless)
                           int l,        // Polar eigenvalue
                           int input_m,  // Azimuthal eigenvalue
                           int n ) {     // Overtone Number
@@ -212,13 +216,13 @@ static double SC07102016( double kappa  // Domain mapping for remnant BH's spin 
   double kappa7 = kappa6 * kappa;
 
   // NOTE that |m| will be used to determine the fit to use, and if input_m < 0, then a conjugate will be taken
-  int m = abs(input_m)
+  int m = abs(input_m);
 
   //
-  complex double j = _Complex_I
+  complex double j = _Complex_I;
 
   // Initialize the answer
-  double complex ans
+  double complex ans;
 
   // Use If-Else ladder to determine which mode function to evaluate
   if ( 2==l && 2==m && 0==n  ){
@@ -269,15 +273,17 @@ static double SC07102016( double kappa  // Domain mapping for remnant BH's spin 
     } else {
 
       //
-      ans  = 0.0
+      ans  = 0.0;
 
   } // END of IF-ELSE Train for QNM cases
 
   // If m<0, then take the conjugate
   if ( input_m < 0 ) {
     //
-    ans = conj( ans )
+    ans = conj( ans );
   }
+
+  return ans;
 
 } // END of SC07102016
 
@@ -285,7 +291,7 @@ static double SC07102016( double kappa  // Domain mapping for remnant BH's spin 
 /*
 * Spheroidal Harmonic Normalization Constants: Note that name encodes date of writing
 */
-static double CC09102016( double kappa  // Domain mapping for remnant BH's spin (Dimensionless)
+static double CC09102016( double kappa,  // Domain mapping for remnant BH's spin (Dimensionless)
                           int l,        // Polar eigenvalue
                           int input_m,  // Azimuthal eigenvalue
                           int n ) {     // Overtone Number
@@ -299,10 +305,10 @@ static double CC09102016( double kappa  // Domain mapping for remnant BH's spin 
   double kappa7 = kappa6 * kappa;
 
   // NOTE that |m| will be used to determine the fit to use, and if input_m < 0, then a conjugate will be taken
-  int m = abs(input_m)
+  int m = abs(input_m);
 
   // Initialize the answer
-  double complex ans
+  double complex ans;
 
   // Use If-Else ladder to determine which mode function to evaluate
   if ( 2==l && 2==m && 0==n  ){
@@ -353,9 +359,11 @@ static double CC09102016( double kappa  // Domain mapping for remnant BH's spin 
     } else {
 
       //
-      ans  = 0.0
+      ans  = 0.0;
 
   } // END of IF-ELSE Train for QNM cases
+
+  return ans;
 
 } // END of CC09102016
 
@@ -364,11 +372,8 @@ static double CC09102016( double kappa  // Domain mapping for remnant BH's spin 
 * Final Spin (Dimensionless)
 */
 static double JF07102016( double eta ) {
-  // Precompute powers for speed
-  eta2 = eta * eta;
-  eta3 = et2 * eta;
   // Implement Final Spin Fit from arXiv:1404.3197
-  return 3.4339*eta - 3.7988*eta2 + 5.7733*eta3 - 6.3780*eta4
+  return eta*( 3.4339 - eta*( 3.7988 + eta*(5.7733 - 6.3780*eta) ) );
 }
 
 /*
@@ -376,16 +381,20 @@ static double JF07102016( double eta ) {
 */
 static double MF07102016( double eta ) {
   // Precompute powers for speed
-  eta2 = eta * eta;
-  eta3 = et2 * eta;
   // Implement Final Mass Fit from arXiv:1404.3197
-  return 1.0 - 0.046297*eta - 0.71006*eta2 + 1.5028*eta3 - 4.0124*eta4 - 0.28448*eta5
+  return 1.0 - eta*(0.046297 - eta*(0.71006 + eta*(1.5028 - eta*(4.0124 - eta*0.28448))));
 }
 
 
 // ------------------------------------------------ #
 // Angular parameter functions
 // ------------------------------------------------ #
+static double K1( int m, int s ){
+  return 0.5*abs(m-s);
+}
+static double K2( int m, int s ){
+  return 0.5*abs(m+s);
+}
 static complex double ALPHA( int m, int s, int p ){
   //
   double k1 = 0.5*abs(m-s);
@@ -393,14 +402,14 @@ static complex double ALPHA( int m, int s, int p ){
 }
 static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm, complex double w_lm ){
   //
-  double k1 = 0.5*abs(m-s);
-  double k2 = 0.5*abs(m+s);
+  double k1 = K1(m,s);
+  double k2 = K2(m,s);
   return  p*(p-1.0)+2.0*p*(k1+k2+1.0-2.0*aw) - ( 2.0*aw*(2.0*k1+s+1.0)-(k1+k2) * (k1+k2+1.0) ) - ( aw*aw + s*(s+1.0) + A_lm);
 }
 static complex double GAMMA( int m, int s, int p, complex double aw ){
   //
-  double k1 = 0.5*abs(m-s);
-  double k2 = 0.5*abs(m+s);
+  double k1 = K1(m,s);
+  double k2 = K2(m,s);
   return 2.0*aw*(p+k1+k2+s);
 }
 
@@ -411,7 +420,7 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin o
                    int l, int m, int n, // QNM indeces
                    double theta,        // polar angle
                    double phi,          // azimuthal angle
-                   bool norm,           // boolean toggle for normalization
+                   bool norm           // boolean toggle for normalization
                  ) {
 
   // Set spin weight
@@ -421,48 +430,50 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin o
   const double et = 1e-8;
 
   // Use tabulated cw and sc values from the core package
-  const double complex cw, sc;
-  const double kappa = KAPPA(jf,l,m);
+  double complex cw, sc, aw;
+  double kappa = KAPPA(jf,l,m);
 
-  complex double cw = CW07102016( kappa, l, m, n );
-  complex double sc = SC07102016( kappa, l, m, n );
+  cw = CW07102016( kappa, l, m, n );
+  sc = SC07102016( kappa, l, m, n );
 
   // Define dimensionless deformation parameter
-  const complex double aw = jf*cw;
+  aw = jf*cw;
 
   // ------------------------------------------------ #
   // Calculate the angular eighenfunction
   // ------------------------------------------------ #
 
   // Variable map for theta
-  u = cos(theta);
+  double u = cos(theta);
 
   // the non-sum part of eq 18
   complex double X = 1.0;
-  X = X * cexp(aw*u) * pow(1.0+u,k1);
-  X = X * pow(1.0-u,k2);
+  X = X * cexp(aw*u) * pow(1.0+u, K1(m,s) );
+  X = X * pow(1.0-u,K2(m,s));
 
   // initial series values
-  const double a0 = 1.0;
+  double a0 = 1.0;
 
-  const double a1 = -BETA( m, s, p, aw, sc, cw )/ALPHA( m, s, 0 );
+  double a1 = -BETA( m, s, 0, aw, sc, cw )/ALPHA( m, s, 0 );
 
   // the sum part
-  const int done = 0;
   double complex Y = a0;
+  complex double S;
+  double dY,xx;
+  double a2;
   int done = 0;
   int k, j;
   Y = Y + a1*(1.0+u);
   k = 1;
-  kmax = 2e3;
-  et2=1e-8;
+  int kmax = 2e3;
+  double et2=1e-8;
   while ( ! done ) {
     k += 1;
     j = k-1;
     a2 = -1.0*( BETA( m, s, j, aw, sc, cw )*a1 + GAMMA(m,s,j,aw)*a0 ) / ALPHA(m,s,j);
     dY = pow(a2*(1.0+u),k);
     Y += dY;
-    xx = max(abs( dY ));
+    xx = fabs( dY );
 
     done = (k>=l) && ( (xx<et2 && k>30) || k>kmax );
     done = done || xx<et2;
@@ -475,9 +486,9 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin o
 
   // Use same sign convention as spherical harmonics
   // e.g http://en.wikipedia.org/wiki/Spin-weighted_spherical_harmonics#Calculating
-  static const double C = 1;
-  C = C * pow(-1,max(-m,-s)) * pow(-1,l);
-  complex double S = C * S;
+  double C = 1.0;
+  C = C * pow(-1,fmax(-m,-s)) * pow(-1,l);
+  S = C * S;
 
   //
   return S;
@@ -486,34 +497,34 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin o
 
 //
 int XLALSimRingdownMMRDNSTD(
-        REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
-        REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
-        REAL8 phiRef,                   /**< orbital phase at reference pt. */
-        REAL8 inclination,              /**< inclination angle */
-        REAL8 deltaT,                   /**< sampling interval (s) */
-        REAL8 m1,                       /**< mass of companion 1 (kg) */
-        REAL8 m2,                       /**< mass of companion 2 (kg) */
-        REAL8 r,                        /**< distance of source (m) */
-        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
+        double **hplus,        /**< OUTPUT h_+ vector */
+        double **hcross,       /**< OUTPUT h_x vector */
+        double phiRef,                   /**< orbital phase at reference pt. */
+        double inclination,              /**< inclination angle */
+        double deltaT,                   /**< sampling interval (s) */
+        double m1,                       /**< mass of companion 1 (kg) */
+        double m2,                       /**< mass of companion 2 (kg) */
+        double r,                        /**< distance of source (m) */
+        const int *extraParams /**< linked list containing the extra testing GR parameters */
         ){
 
-  print("\n\n\n\n\n\nI AM HERE. AND YOU ARE THERE.\n\n\n\n")
+  printf("\n\n\n\n\n\nI AM HERE. AND YOU ARE THERE.\n\n\n\n");
   // /* Declarations */
   // UINT4 curr_idx;
   // INT4 model, modem;
   // size_t array_length;
-  // REAL8 eta;
+  // double eta;
   // COMPLEX16 curr_ylm;
-  // REAL8TimeSeries *hplus_corr;
-  // REAL8TimeSeries *hcross_corr;
+  // doubleTimeSeries *hplus_corr;
+  // doubleTimeSeries *hcross_corr;
   //
   // /* Create the return time series, use arbitrary epoch here. We set this
   //  * properly later. */
   // XLALGPSAdd(&tmpEpoch, time_start_s);
   //
-  // *hplus  = XLALCreateREAL8TimeSeries("H_PLUS", &tmpEpoch, 0.0, deltaT,
+  // *hplus  = XLALCreatedoubleTimeSeries("H_PLUS", &tmpEpoch, 0.0, deltaT,
   //                                     &lalStrainUnit, array_length );
-  // *hcross = XLALCreateREAL8TimeSeries("H_CROSS", &tmpEpoch, 0.0, deltaT,
+  // *hcross = XLALCreatedoubleTimeSeries("H_CROSS", &tmpEpoch, 0.0, deltaT,
   //                                     &lalStrainUnit, array_length );
 
 
