@@ -497,18 +497,18 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           // Spin o
 
 //
 int XLALSimRingdownMMRDNSTD(
-        double **hplus,        /**< OUTPUT h_+ vector */
-        double **hcross,       /**< OUTPUT h_x vector */
-        double phiRef,                   /**< orbital phase at reference pt. */
-        double inclination,              /**< inclination angle */
-        double deltaT,                   /**< sampling interval (s) */
-        double m1,                       /**< mass of companion 1 (kg) */
-        double m2,                       /**< mass of companion 2 (kg) */
-        double r,                        /**< distance of source (m) */
-        const int *extraParams /**< linked list containing the extra testing GR parameters */
+        REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
+        REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
+        REAL8 phiRef,                   /**< orbital phase at reference pt. */
+        REAL8 inclination,              /**< inclination angle */
+        REAL8 deltaT,                   /**< sampling interval (s) */
+        REAL8 m1,                       /**< mass of companion 1 (kg) */
+        REAL8 m2,                       /**< mass of companion 2 (kg) */
+        REAL8 r,                        /**< distance of source (m) */
+        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
         ){
 
-  printf("\n\n\n\n\n\nI AM HERE. AND YOU ARE THERE.\n\n\n\n");
+  printf("\n\n\n\n\n\nThis is filler.\n\n\n\n");
   // /* Declarations */
   // UINT4 curr_idx;
   // INT4 model, modem;
