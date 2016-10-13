@@ -289,7 +289,7 @@ static double SC07102016( double kappa,  /* Domain mapping for remnant BH's spin
 /*
 * Spheroidal Harmonic Normalization Constants: Note that name encodes date of writing
 */
-static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless)*/
+UNUSED static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless)*/
                           int l,        /* Polar eigenvalue*/
                           int input_m,  /* Azimuthal eigenvalue*/
                           int n ) {     /* Overtone Number*/
@@ -368,7 +368,7 @@ static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin
 /*
 * Final Spin (Dimensionless)
 */
-static double JF07102016( double eta ) {
+UNUSED static double JF07102016( double eta ) {
   /* Implement Final Spin Fit from arXiv:1404.3197 */
   return eta*( 3.4339 - eta*( 3.7988 + eta*(5.7733 - 6.3780*eta) ) );
 }
@@ -376,7 +376,7 @@ static double JF07102016( double eta ) {
 /*
 * Final Mass (Dimensionless: Relative to M=1 initially)
 */
-static double MF07102016( double eta ) {
+UNUSED static double MF07102016( double eta ) {
   /* Implement Final Mass Fit from arXiv:1404.3197 */
   return 1.0 - eta*(0.046297 - eta*(0.71006 + eta*(1.5028 - eta*(4.0124 - eta*0.28448))));
 }
@@ -385,24 +385,24 @@ static double MF07102016( double eta ) {
 /* ------------------------------------------------
           Angular parameter functions
  ------------------------------------------------ */
-static double K1( int m, int s ){
+UNUSED static double K1( int m, int s ){
   return 0.5*abs(m-s);
 }
-static double K2( int m, int s ){
+UNUSED static double K2( int m, int s ){
   return 0.5*abs(m+s);
 }
-static complex double ALPHA( int m, int s, int p ){
+UNUSED static complex double ALPHA( int m, int s, int p ){
   /**/
   double k1 = 0.5*abs(m-s);
   return -2.0*(p+1.0)*(p+2.0*k1+1.0);
 }
-static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm ){
+UNUSED static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm ){
   /**/
   double k1 = K1(m,s);
   double k2 = K2(m,s);
   return  p*(p-1.0)+2.0*p*(k1+k2+1.0-2.0*aw) - ( 2.0*aw*(2.0*k1+s+1.0)-(k1+k2) * (k1+k2+1.0) ) - ( aw*aw + s*(s+1.0) + A_lm);
 }
-static complex double GAMMA( int m, int s, int p, complex double aw ){
+UNUSED static complex double GAMMA( int m, int s, int p, complex double aw ){
   /**/
   double k1 = K1(m,s);
   double k2 = K2(m,s);
@@ -412,7 +412,7 @@ static complex double GAMMA( int m, int s, int p, complex double aw ){
 /*
 * Spheroical Harmonic Functions (Leaver's Formulation circa 1986/85)
 */
-static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
+UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
                    int l, int m, int n, /* QNM indeces */
                    double theta,        /* polar angle */
                    double phi          /* azimuthal angle */
@@ -442,6 +442,9 @@ static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /
   complex double X = 1.0;
   X = X * cexp(aw*u) * pow(1.0+u, K1(m,s) );
   X = X * pow(1.0-u,K2(m,s));
+
+  /* NOTE that here we apply the normalization constant */
+  X = X / CC09102016(kappa,l,m,n);
 
   /* initial series values */
   double a0 = 1.0;
@@ -489,15 +492,15 @@ static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /
 
 /**/
 int XLALSimRingdownMMRDNSTD(
-        REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
-        REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
-        REAL8 phiRef,                   /**< orbital phase at reference pt. */
-        REAL8 inclination,              /**< inclination angle */
-        REAL8 deltaT,                   /**< sampling interval (s) */
-        REAL8 m1,                       /**< mass of companion 1 (kg) */
-        REAL8 m2,                       /**< mass of companion 2 (kg) */
-        REAL8 r,                        /**< distance of source (m) */
-        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
+        UNUSED REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
+        UNUSED REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
+        UNUSED REAL8 phiRef,                   /**< orbital phase at reference pt. */
+        UNUSED REAL8 inclination,              /**< inclination angle */
+        UNUSED REAL8 deltaT,                   /**< sampling interval (s) */
+        UNUSED REAL8 m1,                       /**< mass of companion 1 (kg) */
+        UNUSED REAL8 m2,                       /**< mass of companion 2 (kg) */
+        UNUSED REAL8 r,                        /**< distance of source (m) */
+        UNUSED const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
         ){
 
   printf("\n\n\n\n\n\nThis is filler.\n\n\n\n");
