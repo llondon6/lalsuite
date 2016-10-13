@@ -33,12 +33,11 @@
 #include <complex.h>
 #include <stdlib.h>
 
-#include <lal/LALSimRingdownMMRDNS.h>
+#include "LALSimRingdownMMRDNS.h"
 #include <lal/SphericalHarmonics.h>
 #include <lal/LALConstants.h>
 #include <lal/XLALError.h>
 #include <lal/Date.h>
-#include <lal/SphericalHarmonics.h>
 #include <lal/Units.h>
 #include <lal/Sequence.h>
 #include <lal/LALStdio.h>
@@ -301,7 +300,6 @@ static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin
   double kappa4 = kappa3 * kappa;
   double kappa5 = kappa4 * kappa;
   double kappa6 = kappa5 * kappa;
-  double kappa7 = kappa6 * kappa;
 
   /* NOTE that |m| will be used to determine the fit to use, and if input_m < 0, then a conjugate will be taken*/
   int m = abs(input_m);
@@ -398,7 +396,7 @@ static complex double ALPHA( int m, int s, int p ){
   double k1 = 0.5*abs(m-s);
   return -2.0*(p+1.0)*(p+2.0*k1+1.0);
 }
-static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm, complex double w_lm ){
+static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm ){
   /**/
   double k1 = K1(m,s);
   double k2 = K2(m,s);
@@ -414,18 +412,14 @@ static complex double GAMMA( int m, int s, int p, complex double aw ){
 /*
 * Spheroical Harmonic Functions (Leaver's Formulation circa 1986/85)
 */
-static double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
+static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
                    int l, int m, int n, /* QNM indeces */
                    double theta,        /* polar angle */
-                   double phi,          /* azimuthal angle */
-                   bool norm           /* boolean toggle for normalization */
+                   double phi          /* azimuthal angle */
                  ) {
 
   /* Set spin weight */
   const int s = -2;
-
-  /* Define an absolute error tolerance */
-  const double et = 1e-8;
 
   /* Use tabulated cw and sc values from the core package*/
   double complex cw, sc, aw;
@@ -452,7 +446,7 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin o
   /* initial series values */
   double a0 = 1.0;
 
-  double a1 = -BETA( m, s, 0, aw, sc, cw )/ALPHA( m, s, 0 );
+  double a1 = -BETA( m, s, 0, aw, sc )/ALPHA( m, s, 0 );
 
   /* the sum part */
   double complex Y = a0;
@@ -464,17 +458,17 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin o
   Y = Y + a1*(1.0+u);
   k = 1;
   int kmax = 2e3;
-  double et2=1e-8;
+  double et=1e-8;
   while ( ! done ) {
     k += 1;
     j = k-1;
-    a2 = -1.0*( BETA( m, s, j, aw, sc, cw )*a1 + GAMMA(m,s,j,aw)*a0 ) / ALPHA(m,s,j);
+    a2 = -1.0*( BETA( m, s, j, aw, sc )*a1 + GAMMA(m,s,j,aw)*a0 ) / ALPHA(m,s,j);
     dY = pow(a2*(1.0+u),k);
     Y += dY;
     xx = fabs( dY );
 
-    done = (k>=l) && ( (xx<et2 && k>30) || k>kmax );
-    done = done || xx<et2;
+    done = (k>=l) && ( (xx<et && k>30) || k>kmax );
+    done = done || xx<et;
     a0 = a1;
     a1 = a2;
   }
@@ -482,8 +476,8 @@ static double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin o
   /* together now */
   S = X*Y*cexp( _Complex_I * m * phi );
 
-  /* Use same sign convention as spherical harmonics */
-  /* e.g http:/*en.wikipedia.org/wiki/Spin-weighted_spherical_harmonics#Calculating*/
+  /* Use same sign convention as spherical harmonics
+  e.g http://en.wikipedia.org/wiki/Spin-weighted_spherical_harmonics#Calculating */
   double C = 1.0;
   C = C * pow(-1,fmax(-m,-s)) * pow(-1,l);
   S = C * S;
@@ -507,6 +501,8 @@ int XLALSimRingdownMMRDNSTD(
         ){
 
   printf("\n\n\n\n\n\nThis is filler.\n\n\n\n");
+
+  /* complex double S = XLALSpinWeightedSpheroidalHarmonic(0.68,2,2,0,0,0); */
 
   /* Declarations */
 

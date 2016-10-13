@@ -241,19 +241,6 @@ int XLALSimInspiralNRWaveformGetHplusHcross(
         const char *NRDataFile          /**< Location of NR HDF file */
         );
 
-// Generate Time domain ringdown waveform
-int XLALSimRingdownMMRDNSTD(
-        REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
-        REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
-        REAL8 phiRef,                   /**< orbital phase at reference pt. */
-        REAL8 inclination,              /**< inclination angle */
-        REAL8 deltaT,                   /**< sampling interval (s) */
-        REAL8 m1,                       /**< mass of companion 1 (kg) */
-        REAL8 m2,                       /**< mass of companion 2 (kg) */
-        REAL8 r,                        /**< distance of source (m) */
-        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
-        );
-
 #if 0
 { /* so that editors will match succeeding brace */
 #elif defined(__cplusplus)

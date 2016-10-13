@@ -74,7 +74,7 @@ static double SC07102016( double kappa,  /* Domain mapping for remnant BH's spin
                           int input_m,  /* Azimuthal eigenvalue */
                           int n );      /* Overtone Number */
 /* --> Fits for spheroidal harmonic normalization constants; needed to calculate spheroidal harmonics */
-static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin */ (Dimensionless)
+static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
                           int l,        /* Polar eigenvalue */
                           int input_m,  /* Azimuthal eigenvalue */
                           int n );      /* Overtone Number */
@@ -83,23 +83,22 @@ static double MF07102016( double eta );
 /* --> Final Spin fit arXiv:1404.3197 */
 static double JF07102016( double eta );
 
-/* ------------------------------------------------ # */
-/* Angular parameter functions
-/* ------------------------------------------------ # */
+/* ------------------------------------------------
+   Angular parameter functions
+ ------------------------------------------------ */
 static double K1( int m, int s );
 static double K2( int m, int s );
 static complex double ALPHA( int m, int s, int p );
-static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm, complex double w_lm );
+static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm );
 static complex double GAMMA( int m, int s, int p, complex double aw );
 
 /*
 * Spheroical Harmonic Functions (Leaver's Formulation circa 1986/85)
 */
-static double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
+static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
                    int l, int m, int n, /* QNM indeces */
                    double theta,        /* polar angle */
-                   double phi,          /* azimuthal angle */
-                   bool norm           /* boolean toggle for normalization  */
+                   double phi          /* azimuthal angle */
                  );
 
 /* Gnerate Time domain ringdown waveform  */
