@@ -103,17 +103,30 @@ static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /
 
 /* Gnerate Time domain ringdown waveform  */
 int XLALSimRingdownMMRDNSTD(
-        REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
-        REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
-        REAL8 phiRef,                   /**< orbital phase at reference pt. */
-        REAL8 inclination,              /**< inclination angle */
-        REAL8 deltaT,                   /**< sampling interval (s) */
-        REAL8 m1,                       /**< mass of companion 1 (kg) */
-        REAL8 m2,                       /**< mass of companion 2 (kg) */
-        REAL8 r,                        /**< distance of source (m) */
-        const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
+        UNUSED REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
+        UNUSED REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
+        UNUSED REAL8 phiRef,                   /**< orbital phase at reference pt. */
+        UNUSED REAL8 inclination,              /**< inclination angle */
+        UNUSED REAL8 deltaT,                   /**< sampling interval (s) */
+        UNUSED REAL8 m1,                       /**< mass of companion 1 (kg) */
+        UNUSED REAL8 m2,                       /**< mass of companion 2 (kg) */
+        UNUSED REAL8 r,                        /**< distance of source (m) */
+        UNUSED const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
         );
 
+/* XLALSimRingdownSingleModeTD: Time domain waveformgenerator for single QNM without angular dependence (i.e. this function generates multipole moments only ). In  */
+int XLALSimRingdownGenerateSingleModeTD(
+  UNUSED REAL8TimeSeries **hkplus,        /**< OUTPUT vector for QNM time series */
+  UNUSED REAL8TimeSeries **hkcross,       /**< OUTPUT vector for QNM time series */
+  UNUSED REAL8 REAL8 T0,                  /**< Start time  */
+  UNUSED REAL8 deltaT,                    /**< sampling interval (s) */
+  UNUSED REAL8 Nsamples,                  /**< Number of time domain samples */
+  UNUSED complex double Ak,               /**< COMPLEX QNM Strain Amplitude */
+  UNUSED complex double CWk               /**< COMPLEX QNM Frequency */
+);
+
+/* Convert NR Code Time to Physical Units */
+static double XLALNRtoPhysTime( UNUSED  );
 
 /* ************************************************************  */
 #endif	/* of #ifndef _LALSIM_RINGDOWN_MMRDNS_H */

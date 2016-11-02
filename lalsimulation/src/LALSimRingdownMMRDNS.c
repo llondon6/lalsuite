@@ -33,17 +33,24 @@
 #include <complex.h>
 #include <stdlib.h>
 
-#include "LALSimRingdownMMRDNS.h"
-#include <lal/SphericalHarmonics.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_bspline.h>
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_min.h>
+#include <gsl/gsl_spline.h>
+#include <lal/Units.h>
+#include <lal/SeqFactories.h>
 #include <lal/LALConstants.h>
 #include <lal/XLALError.h>
+#include <lal/FrequencySeries.h>
 #include <lal/Date.h>
-#include <lal/Units.h>
+#include <lal/StringInput.h>
 #include <lal/Sequence.h>
 #include <lal/LALStdio.h>
 #include <lal/FileIO.h>
-#include <lal/StringInput.h>
-#include <lal/TimeSeries.h>
+
+#include "LALSimRingdownMMRDNS.h"
+#include <lal/LALSimInspiralTestGRParams.h>
 
 /*
 * -------------------------------------------------------------------------------- *
@@ -452,23 +459,24 @@ UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,     
   double a1 = -BETA( m, s, 0, aw, sc )/ALPHA( m, s, 0 );
 
   /* the sum part */
-  double complex Y = a0;
+  complex double Y = a0;
   complex double S;
-  double dY,xx;
-  double a2;
+  complex double dY;
+  double xx;
+  complex double a2;
   int done = 0;
   int k, j;
   Y = Y + a1*(1.0+u);
   k = 1;
   int kmax = 2e3;
-  double et=1e-8;
+  double et = 1e-8;
   while ( ! done ) {
     k += 1;
     j = k-1;
     a2 = -1.0*( BETA( m, s, j, aw, sc )*a1 + GAMMA(m,s,j,aw)*a0 ) / ALPHA(m,s,j);
     dY = pow(a2*(1.0+u),k);
     Y += dY;
-    xx = fabs( dY );
+    xx = cabs( dY );
 
     done = (k>=l) && ( (xx<et && k>30) || k>kmax );
     done = done || xx<et;
@@ -479,7 +487,7 @@ UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,     
   /* together now */
   S = X*Y*cexp( _Complex_I * m * phi );
 
-  /* Use same sign convention as spherical harmonics
+  /* Use the same sign convention as spherical harmonics
   e.g http://en.wikipedia.org/wiki/Spin-weighted_spherical_harmonics#Calculating */
   double C = 1.0;
   C = C * pow(-1,fmax(-m,-s)) * pow(-1,l);
@@ -500,36 +508,54 @@ int XLALSimRingdownMMRDNSTD(
         UNUSED REAL8 m1,                       /**< mass of companion 1 (kg) */
         UNUSED REAL8 m2,                       /**< mass of companion 2 (kg) */
         UNUSED REAL8 r,                        /**< distance of source (m) */
-        UNUSED const LALSimInspiralTestGRParam *extraParams /**< linked list containing the extra testing GR parameters */
+        UNUSED LALSimInspiralTestGRParam *nonGRparams /**< linked list containing the extra testing GR parameters */
         ){
 
-  printf("\n\n\n\n\n\nThis is filler.\n\n\n\n");
+        /* Declarations */
+        double T0 = 0
+        double tau22 = cimag( CW07102016(kappa,l,) )
+        int waveform_length
 
-  /* complex double S = XLALSpinWeightedSpheroidalHarmonic(0.68,2,2,0,0,0); */
 
-  /* Declarations */
+        /* Create the plus and cross polarization vectors */
+        *hplus = XLALCreateREAL8TimeSeries("hplus", T0, 0.0, deltaT, &lalStrainUnit, waveform_length);
+        *hcross = XLALCreateREAL8TimeSeries("hcross", T0, 0.0, deltaT, &lalStrainUnit, waveform_length);
 
-  /*
-  UINT4 curr_idx;
-  INT4 model, modem;
-  size_t array_length;
-  double eta;
-  COMPLEX16 curr_ylm;
-  doubleTimeSeries *hplus_corr;
-  doubleTimeSeries *hcross_corr;
-  */
-
-  /* Create the return time series, use arbitrary epoch here. We set this
-   * properly later. */
-
-  /*
-  XLALGPSAdd(&tmpEpoch, time_start_s);
-
-  *hplus  = XLALCreatedoubleTimeSeries("H_PLUS", &tmpEpoch, 0.0, deltaT,
-                                      &lalStrainUnit, array_length );
-  *hcross = XLALCreatedoubleTimeSeries("H_CROSS", &tmpEpoch, 0.0, deltaT,
-                                      &lalStrainUnit, array_length );
-  */
 
   return 0;
+}
+
+
+/* XLALSimRingdownSingleModeTD: Time domain waveformgenerator for single QNM without angular dependence (i.e. this function generates multipole moments only ). In  */
+int XLALSimRingdownGenerateSingleModeTD(
+  UNUSED XLALCreateCOMPLEX16TimeSeries **hk,  /**< OUTPUT vector for QNM time series */
+  UNUSED REAL8 T0,                            /**< Start time  */
+  UNUSED REAL8 deltaT,                        /**< sampling interval (s) */
+  UNUSED REAL8 Nsamples,                      /**< Number of time domain samples */
+  UNUSED complex double Ak,                   /**< COMPLEX QNM Strain Amplitude */
+  UNUSED complex double CWk                   /**< COMPLEX QNM Frequency */
+){
+
+  /*  */
+  *hk = XLALCreateCOMPLEX16TimeSeries( "", t0, 0.0, deltaT, &lalStrainUnit, length);
+    memset( (*hlmmode)->data->data, 0, length*sizeof(COMPLEX16) ) ;
+
+  /**/
+  COMPLEX16 cwdt;
+
+  /**/
+  cwdt = CWk*deltaT;
+
+  /**/
+  for ( k=0, k < Nsamples, ++k ){
+
+    /**/
+    COMPLEX16 h;
+    h = Ak * cexp(-I * cwdt * k);
+    (*hk)->data->data[k] = h;
+
+  }
+
+  return 0;
+
 }
