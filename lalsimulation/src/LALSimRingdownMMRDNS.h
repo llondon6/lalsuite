@@ -34,16 +34,26 @@
 #include <complex.h>
 /* LAL specific libs  */
 
+#include <lal/Date.h>
+#include <lal/FrequencySeries.h>
+#include <lal/Units.h>
+
 #include <lal/LALDatatypes.h>
 #include <lal/LALStdlib.h>
 #include <lal/LALSimInspiral.h>
 #include <lal/LALSimIMR.h>
 #include <lal/LALConfig.h>
 #include <lal/LALConstants.h>
-#include <lal/Date.h>
-#include <lal/FrequencySeries.h>
-#include <lal/Units.h>
+
+#include <lal/LALConstants.h>
+#include <lal/LALStdio.h>
+#include <lal/LALSimSphHarmSeries.h>
+#include <lal/LALStdlib.h>
 #include <lal/LALSimInspiral.h>
+#include "check_series_macros.h"
+
+#include <lal/TimeSeries.h>
+#include <lal/FrequencySeries.h>
 
 /* ---------------------------------------- */
 /* General model methods and parameters     */
@@ -61,27 +71,15 @@ static const int MMRDNS_MODES[9][3] =  { {2,2,0},
                                          {4,3,0}
                                        };
 
-/* --> Domain mapping for final spin, Kappa */
-static double KAPPA( double jf, int l, int m );
-/* --> Fits for complex QNM frequencies */
-static double CW07102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
-                          int l,        /* Polar eigenvalue */
-                          int input_m,  /* Azimuthal eigenvalue */
-                          int n );      /* Overtone Number */
-/* --> Fits for complex QNM separation constants; needed to calculate spheroidal harmonics */
-static double SC07102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
-                          int l,        /* Polar eigenvalue */
-                          int input_m,  /* Azimuthal eigenvalue */
-                          int n );      /* Overtone Number */
 /* --> Fits for spheroidal harmonic normalization constants; needed to calculate spheroidal harmonics */
 static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
                           int l,        /* Polar eigenvalue */
                           int input_m,  /* Azimuthal eigenvalue */
                           int n );      /* Overtone Number */
 /* --> Final Mass fit arXiv:1404.3197 */
-static double MF07102016( double eta );
+static double MFNS07102016( double eta );
 /* --> Final Spin fit arXiv:1404.3197 */
-static double JF07102016( double eta );
+static double JFNS07102016( double eta );
 
 /* ------------------------------------------------
    Angular parameter functions
@@ -116,9 +114,8 @@ int XLALSimRingdownMMRDNSTD(
 
 /* XLALSimRingdownSingleModeTD: Time domain waveformgenerator for single QNM without angular dependence (i.e. this function generates multipole moments only ). In  */
 int XLALSimRingdownGenerateSingleModeTD(
-  UNUSED REAL8TimeSeries **hkplus,        /**< OUTPUT vector for QNM time series */
-  UNUSED REAL8TimeSeries **hkcross,       /**< OUTPUT vector for QNM time series */
-  UNUSED REAL8 REAL8 T0,                  /**< Start time  */
+  UNUSED COMPLEX16TimeSeries **hk,        /**< OUTPUT vector for QNM time series */
+  UNUSED REAL8 T0,                        /**< Start time  */
   UNUSED REAL8 deltaT,                    /**< sampling interval (s) */
   UNUSED REAL8 Nsamples,                  /**< Number of time domain samples */
   UNUSED complex double Ak,               /**< COMPLEX QNM Strain Amplitude */
@@ -126,7 +123,7 @@ int XLALSimRingdownGenerateSingleModeTD(
 );
 
 /* Convert NR Code Time to Physical Units */
-static double XLALNRtoPhysTime( UNUSED  );
+static double XLALNRtoPhysTime( UNUSED double NRtime  );
 
 /* ************************************************************  */
 #endif	/* of #ifndef _LALSIM_RINGDOWN_MMRDNS_H */

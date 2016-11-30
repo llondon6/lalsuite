@@ -76,6 +76,8 @@ pkginclude_HEADERS = \
 	LALSimulationVCSInfoHeader.h
 
 noinst_HEADERS = \
+	LALSimRingdownMMRDNS.c \
+	LALSimRingdownCW.c \
 	LALSimBlackHoleRingdownPrec.c \
 	LALSimBlackHoleRingdownPrec.h \
 	LALSimFindAttachTime.h \
@@ -128,6 +130,7 @@ lib_LTLIBRARIES = liblalsimulation.la
 liblalsimulation_la_SOURCES = \
 	LALSimBlackHoleRingdown.c \
 	LALSimRingdownMMRDNS.c \
+	LALSimRingdownCW.c \
 	LALSimBurst.c \
 	LALSimBurstImg.c \
 	LALSimIMREOBNRv2.c \
