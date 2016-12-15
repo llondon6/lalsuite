@@ -50,6 +50,8 @@
 #include <lal/FileIO.h>
 #include <lal/TimeSeries.h>
 
+#include "LALSimRingdownCW.h"
+
 /*
 * Basic NOTE(s):
 *   - This file contains a function, CW07102016, which outputs complex valued, UNITLESS, QNM frequencies (i.e. Mw) for various QNMs

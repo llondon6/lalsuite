@@ -76,8 +76,8 @@ pkginclude_HEADERS = \
 	LALSimulationVCSInfoHeader.h
 
 noinst_HEADERS = \
-	LALSimRingdownMMRDNS.c \
-	LALSimRingdownCW.c \
+	LALSimRingdownMMRDNS.h \
+	LALSimRingdownCW.h \
 	LALSimBlackHoleRingdownPrec.c \
 	LALSimBlackHoleRingdownPrec.h \
 	LALSimFindAttachTime.h \

@@ -52,13 +52,12 @@
 #include <lal/LALSimSphHarmSeries.h>
 #include <lal/LALStdlib.h>
 #include <lal/LALSimInspiral.h>
-#include "check_series_macros.h"
 
 #include <lal/TimeSeries.h>
 #include <lal/FrequencySeries.h>
 
 #include "LALSimRingdownMMRDNS.h"
-#include "LALSimRingdownCW.h"
+#include "LALSimRingdownCW.c"
 #include <lal/LALSimInspiralTestGRParams.h>
 
 /*
@@ -261,18 +260,18 @@ UNUSED static double K1( int m, int s ){
 UNUSED static double K2( int m, int s ){
   return 0.5*abs(m+s);
 }
-UNUSED static complex double ALPHA( int m, int s, int p ){
+UNUSED static complex double ALPHA_RD( int m, int s, int p ){
   /**/
   double k1 = 0.5*abs(m-s);
   return -2.0*(p+1.0)*(p+2.0*k1+1.0);
 }
-UNUSED static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm ){
+UNUSED static complex double BETA_RD( int m, int s, int p, complex double aw, complex double A_lm ){
   /**/
   double k1 = K1(m,s);
   double k2 = K2(m,s);
   return  p*(p-1.0)+2.0*p*(k1+k2+1.0-2.0*aw) - ( 2.0*aw*(2.0*k1+s+1.0)-(k1+k2) * (k1+k2+1.0) ) - ( aw*aw + s*(s+1.0) + A_lm);
 }
-UNUSED static complex double GAMMA( int m, int s, int p, complex double aw ){
+UNUSED static complex double GAMMA_RD( int m, int s, int p, complex double aw ){
   /**/
   double k1 = K1(m,s);
   double k2 = K2(m,s);
@@ -319,7 +318,7 @@ UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,     
   /* initial series values */
   double a0 = 1.0;
 
-  double a1 = -BETA( m, s, 0, aw, sc )/ALPHA( m, s, 0 );
+  double a1 = -BETA_RD( m, s, 0, aw, sc )/ALPHA_RD( m, s, 0 );
 
   /* the sum part */
   complex double Y = a0;
@@ -336,7 +335,7 @@ UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,     
   while ( ! done ) {
     k += 1;
     j = k-1;
-    a2 = -1.0*( BETA( m, s, j, aw, sc )*a1 + GAMMA(m,s,j,aw)*a0 ) / ALPHA(m,s,j);
+    a2 = -1.0*( BETA_RD( m, s, j, aw, sc )*a1 + GAMMA_RD(m,s,j,aw)*a0 ) / ALPHA_RD(m,s,j);
     dY = pow(a2*(1.0+u),k);
     Y += dY;
     xx = cabs( dY );
@@ -375,16 +374,16 @@ int XLALSimRingdownMMRDNSTD(
         ){
 
         /* Declarations */
-        double T0 = 0;
+        const LIGOTimeGPS T0=LIGOTIMEGPSZERO;
         double kappa = KAPPA( 0.68, 2, 2 );
-        double w22 = creal( CW07102016(kappa,2,2,0) );
-        double tau22 = cimag( CW07102016(kappa,2,2,0) );
+        UNUSED double w22 = creal( CW07102016(kappa,2,2,0) );
+        UNUSED double tau22 = cimag( CW07102016(kappa,2,2,0) );
         int waveform_length = 1000;
 
 
         /* Create the plus and cross polarization vectors */
-        *hplus = XLALCreateREAL8TimeSeries("hplus", T0, 0.0, deltaT, &lalStrainUnit, waveform_length);
-        *hcross = XLALCreateREAL8TimeSeries("hcross", T0, 0.0, deltaT, &lalStrainUnit, waveform_length);
+        *hplus = XLALCreateREAL8TimeSeries("hplus", &T0, 0.0, deltaT, &lalStrainUnit, waveform_length);
+        *hcross = XLALCreateREAL8TimeSeries("hcross", &T0, 0.0, deltaT, &lalStrainUnit, waveform_length);
 
 
   return 0;
@@ -393,8 +392,8 @@ int XLALSimRingdownMMRDNSTD(
 
 /* XLALSimRingdownSingleModeTD: Time domain waveformgenerator for single QNM without angular dependence (i.e. this function generates multipole moments only ). In  */
 int XLALSimRingdownGenerateSingleModeTD(
-  UNUSED COMPLEX16TimeSeries **hk,  /**< OUTPUT vector for QNM time series */
-  UNUSED REAL8 T0,                            /**< Start time  */
+  UNUSED COMPLEX16TimeSeries **hk,            /**< OUTPUT vector for QNM time series */
+  UNUSED const LIGOTimeGPS T0,                /**< Start time  */
   UNUSED REAL8 deltaT,                        /**< sampling interval (s) */
   UNUSED REAL8 Nsamples,                      /**< Number of time domain samples */
   UNUSED complex double Ak,                   /**< COMPLEX QNM Strain Amplitude */
@@ -402,8 +401,8 @@ int XLALSimRingdownGenerateSingleModeTD(
 ){
 
   /*  */
-  *hk = XLALCreateCOMPLEX16TimeSeries( "", t0, 0.0, deltaT, &lalStrainUnit, length);
-  memset( (*hk)->data->data, 0, length*sizeof(COMPLEX16) ) ;
+  *hk = XLALCreateCOMPLEX16TimeSeries( "SingleRDTDMode", &T0, 0.0, deltaT, &lalStrainUnit, Nsamples);
+  memset( (*hk)->data->data, 0, Nsamples*sizeof(COMPLEX16) ) ;
 
   /**/
   COMPLEX16 cwdt = 0;
@@ -412,7 +411,8 @@ int XLALSimRingdownGenerateSingleModeTD(
   cwdt = 0; /* CWk*deltaT; */
 
   /**/
-  for ( k=0, k < Nsamples, ++k ){
+  int k;
+  for ( k=0; k < Nsamples; ++k ){
 
     /**/
     COMPLEX16 h;

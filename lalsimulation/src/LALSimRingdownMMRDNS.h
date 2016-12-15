@@ -1,3 +1,10 @@
+
+#ifdef __GNUC__
+#define UNUSED __attribute__ ((unused))
+#else
+#define UNUSED
+#endif
+
 #ifndef _LALSIM_RINGDOWN_MMRDNS_H
 #define _LALSIM_RINGDOWN_MMRDNS_H
 
@@ -50,7 +57,6 @@
 #include <lal/LALSimSphHarmSeries.h>
 #include <lal/LALStdlib.h>
 #include <lal/LALSimInspiral.h>
-#include "check_series_macros.h"
 
 #include <lal/TimeSeries.h>
 #include <lal/FrequencySeries.h>
@@ -60,7 +66,7 @@
 /* ---------------------------------------- */
 
 /* Mode included within the model */
-static const int MMRDNS_MODES[9][3] =  { {2,2,0},
+UNUSED static const int MMRDNS_MODES[9][3] =  { {2,2,0},
                                          {2,2,1},
                                          {3,3,0},
                                          {3,3,1},
@@ -72,35 +78,35 @@ static const int MMRDNS_MODES[9][3] =  { {2,2,0},
                                        };
 
 /* --> Fits for spheroidal harmonic normalization constants; needed to calculate spheroidal harmonics */
-static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
+UNUSED static double CC09102016( double kappa,  /* Domain mapping for remnant BH's spin (Dimensionless) */
                           int l,        /* Polar eigenvalue */
                           int input_m,  /* Azimuthal eigenvalue */
                           int n );      /* Overtone Number */
 /* --> Final Mass fit arXiv:1404.3197 */
-static double MFNS07102016( double eta );
+UNUSED static double MFNS07102016( double eta );
 /* --> Final Spin fit arXiv:1404.3197 */
-static double JFNS07102016( double eta );
+UNUSED static double JFNS07102016( double eta );
 
 /* ------------------------------------------------
    Angular parameter functions
  ------------------------------------------------ */
-static double K1( int m, int s );
-static double K2( int m, int s );
-static complex double ALPHA( int m, int s, int p );
-static complex double BETA( int m, int s, int p, complex double aw, complex double A_lm );
-static complex double GAMMA( int m, int s, int p, complex double aw );
+UNUSED static double K1( int m, int s );
+UNUSED static double K2( int m, int s );
+UNUSED static complex double ALPHA_RD( int m, int s, int p );
+UNUSED static complex double BETA_RD( int m, int s, int p, complex double aw, complex double A_lm );
+UNUSED static complex double GAMMA_RD( int m, int s, int p, complex double aw );
 
 /*
 * Spheroical Harmonic Functions (Leaver's Formulation circa 1986/85)
 */
-static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
+UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
                    int l, int m, int n, /* QNM indeces */
                    double theta,        /* polar angle */
                    double phi          /* azimuthal angle */
                  );
 
 /* Gnerate Time domain ringdown waveform  */
-int XLALSimRingdownMMRDNSTD(
+UNUSED int XLALSimRingdownMMRDNSTD(
         UNUSED REAL8TimeSeries **hplus,        /**< OUTPUT h_+ vector */
         UNUSED REAL8TimeSeries **hcross,       /**< OUTPUT h_x vector */
         UNUSED REAL8 phiRef,                   /**< orbital phase at reference pt. */
@@ -113,9 +119,9 @@ int XLALSimRingdownMMRDNSTD(
         );
 
 /* XLALSimRingdownSingleModeTD: Time domain waveformgenerator for single QNM without angular dependence (i.e. this function generates multipole moments only ). In  */
-int XLALSimRingdownGenerateSingleModeTD(
+UNUSED int XLALSimRingdownGenerateSingleModeTD(
   UNUSED COMPLEX16TimeSeries **hk,        /**< OUTPUT vector for QNM time series */
-  UNUSED REAL8 T0,                        /**< Start time  */
+  UNUSED const LIGOTimeGPS T0,            /**< Start time  */
   UNUSED REAL8 deltaT,                    /**< sampling interval (s) */
   UNUSED REAL8 Nsamples,                  /**< Number of time domain samples */
   UNUSED complex double Ak,               /**< COMPLEX QNM Strain Amplitude */
@@ -123,7 +129,7 @@ int XLALSimRingdownGenerateSingleModeTD(
 );
 
 /* Convert NR Code Time to Physical Units */
-static double XLALNRtoPhysTime( UNUSED double NRtime  );
+UNUSED static double XLALNRtoPhysTime( UNUSED double NRtime  );
 
 /* ************************************************************  */
 #endif	/* of #ifndef _LALSIM_RINGDOWN_MMRDNS_H */

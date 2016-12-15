@@ -19,6 +19,12 @@
  *  Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  *  MA  02111-1307  USA
  */
+ 
+ #ifdef __GNUC__
+ #define UNUSED __attribute__ ((unused))
+ #else
+ #define UNUSED
+ #endif
 
  #if defined(__cplusplus)
  extern "C" {
@@ -49,12 +55,12 @@
 /*
 * Domain mapping for dimnesionless BH spin
 */
-static double KAPPA( double jf, int l, int m );
+UNUSED static double KAPPA( double jf, int l, int m );
 
 /*
 * Dimensionless QNM Frequencies: Note that name encodes date of writing
 */
-static double complex CW07102016( double kappa,  /* Domain mapping for  remnant BH's spin (Dimensionless) */
+UNUSED static double complex CW07102016( double kappa,  /* Domain mapping for  remnant BH's spin (Dimensionless) */
                           int l,        /* Polar eigenvalue */
                           int input_m,  /* Azimuthal eigenvalue*/
                           int n );      /* Overtone Number*/

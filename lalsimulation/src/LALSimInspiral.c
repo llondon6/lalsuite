@@ -40,6 +40,7 @@
 #include <lal/Units.h>
 #include <lal/LALSimBlackHoleRingdown.h>
 
+#include "LALSimRingdownMMRDNS.h"
 #include "LALSimInspiralPNCoefficients.c"
 #include "check_series_macros.h"
 #include "check_waveform_macros.h"
