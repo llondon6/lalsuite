@@ -279,6 +279,86 @@ UNUSED static complex double GAMMA_RD( int m, int s, int p, complex double aw ){
 }
 
 /*
+* QNM Ampliutde models for MMRDNS
+* NOTE that the terms here differ from 1404.3197v3 for accurate relative phases
+*/
+UNUSED static complex double XLALMMRDNSAmplitudes( double eta, int l, int input_m, int n ){
+
+  /* Initialize the answer */
+  double complex ans;
+
+  /**/
+  complex double j = _Complex_I;
+
+  /* NOTE that |m| will be used to determine the fit to use, and if input_m < 0, then a conjugate will be taken */
+  int m = abs(input_m);
+
+  /**/
+  double eta2 = eta*eta;
+  double eta3 = eta2*eta;
+  double eta4 = eta3*eta;
+  double eta5 = eta4*eta;
+
+  /*  Evaluate QNM amplitude models for input l m n */
+  if ( l==2 && m==2 && n==0 ) {
+
+    /*A2201*/
+    ans = 0.95846504*cexp(2.99318408*1j)*eta + 0.47588079*cexp(0.82658128*1j)*(eta2) + 1.23853419*cexp(2.30528861*1j)*(eta3);
+
+  } else if ( l==2 && m==2 && n==1 ) {
+
+    /*A2211*/
+    ans = 0.12750415*cexp(0.05809736*1j)*eta + 1.18823931*cexp(1.51798243*1j)*(eta2) + 8.27086561*cexp(4.42014780*1j)*(eta3) + 26.23294960*cexp(1.16782950*1j)*(eta4);
+
+  } else if ( l==2 && m==1 && n==0 ) {
+
+    /*A2101*/
+    ans = sqrt(1-4*eta)  * (  0.47952344*cexp(5.96556090*1j)*eta + 1.17357614*cexp(3.97472217*1j)*(eta2) + 1.23033028*cexp(2.17322465*1j)*(eta3)  ),
+  	(3,3,0): lambda eta: sqrt(1-4*eta)  * (  0.42472339*cexp(4.54734400*1j)*eta + 1.47423728*cexp(2.70187807*1j)*(eta2) + 4.31385024*cexp(5.12815819*1j)*(eta3) + 15.72642073*cexp(2.25473854*1j)*(eta4)  );
+
+  } else if ( l==3 && m==3 && n==0 ) {
+
+    /*A3301*/
+    ans = sqrt(1-4*eta)  * (  0.42472339*cexp(4.54734400*1j)*eta + 1.47423728*cexp(2.70187807*1j)*(eta2) + 4.31385024*cexp(5.12815819*1j)*(eta3) + 15.72642073*cexp(2.25473854*1j)*(eta4)  );
+
+  } else if ( l==3 && m==3 && n==1 ) {
+
+    /*A3311*/
+    ans = sqrt(1-4*eta)  * (  0.14797161*cexp(2.03957081*1j)*eta + 1.48738894*cexp(5.89538621*1j)*(eta2) + 10.16366839*cexp(3.28354928*1j)*(eta3) + 29.47859659*cexp(0.81061521*1j)*(eta4)  );
+
+  } else if ( l==3 && m==2 && n==0 ) {
+
+    /*A3201*/
+    ans = 0.19573228*cexp(0.54325509*1j)*eta + 1.58299638*cexp(4.24509590*1j)*(eta2) + 5.03380859*cexp(1.71003281*1j)*(eta3) + 3.73662711*cexp(5.14735754*1j)*(eta4);
+
+  } else if ( l==4 && m==4 && n==0 ) {
+
+    /*A4401*/
+    ans = 0.25309908*cexp(5.16320109*1j)*eta + 2.40404787*cexp(2.46899414*1j)*(eta2) + 14.72733952*cexp(5.56235208*1j)*(eta3) + 67.36237809*cexp(2.19824119*1j)*(eta4) + 126.58579931*cexp(5.41735031*1j)*(eta5);
+
+  } else if ( l==4 && m==3 && n==0 ) {
+
+    /*A4301*/
+    ans = sqrt(1-4*eta)  * (  0.09383417*cexp(2.30765661*1j)*eta + 0.82734483*cexp(6.10053234*1j)*(eta2) + 3.33846327*cexp(3.87329126*1j)*(eta3) + 4.66386840*cexp(1.75165690*1j)*(eta4)  );
+
+  } else if ( l==5 && m==5 && n==0 ) {
+
+    /*A5501*/
+    ans = sqrt(1-4*eta)  * (  0.15477314*cexp(1.06752431*1j)*eta + 1.50914172*cexp(4.54983062*1j)*(eta2) + 8.93331690*cexp(1.28981042*1j)*(eta3) + 42.34309620*cexp(4.10035598*1j)*(eta4) + 89.19466498*cexp(1.02508947*1j)*(eta5)  );
+
+  }
+
+  /* If m<0, then take the conjugate */
+  if ( input_m < 0 ) {
+    /**/
+    ans = conj( ans );
+  }
+
+  return ans;
+
+}
+
+/*
 * Spheroical Harmonic Functions (Leaver's Formulation circa 1986/85)
 */
 UNUSED static complex double XLALSpinWeightedSpheroidalHarmonic( double jf,           /* Spin of remnant */
