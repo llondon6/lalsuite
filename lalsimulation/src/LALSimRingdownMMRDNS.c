@@ -313,8 +313,7 @@ UNUSED static complex double XLALMMRDNSAmplitudes( double eta, int l, int input_
   } else if ( l==2 && m==1 && n==0 ) {
 
     /*A2101*/
-    ans = sqrt(1-4*eta)  * (  0.47952344*cexp(5.96556090*1j)*eta + 1.17357614*cexp(3.97472217*1j)*(eta2) + 1.23033028*cexp(2.17322465*1j)*(eta3)  ),
-  	(3,3,0): lambda eta: sqrt(1-4*eta)  * (  0.42472339*cexp(4.54734400*1j)*eta + 1.47423728*cexp(2.70187807*1j)*(eta2) + 4.31385024*cexp(5.12815819*1j)*(eta3) + 15.72642073*cexp(2.25473854*1j)*(eta4)  );
+    ans = sqrt(1-4*eta)  * (  0.47952344*cexp(5.96556090*1j)*eta + 1.17357614*cexp(3.97472217*1j)*(eta2) + 1.23033028*cexp(2.17322465*1j)*(eta3)  );
 
   } else if ( l==3 && m==3 && n==0 ) {
 
